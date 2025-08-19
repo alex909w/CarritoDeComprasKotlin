@@ -1,0 +1,8 @@
+# Ver que sí existen los .kt
+$files = Get-ChildItem -Path .\src -Recurse -Filter *.kt | Select -Expand FullName
+
+# Compilar TODOS los .kt encontrados
+kotlinc -include-runtime -d .\Main.jar $files
+
+# Ejecutar
+java -jar Main.jar
