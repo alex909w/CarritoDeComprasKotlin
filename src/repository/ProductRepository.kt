@@ -9,13 +9,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
-/**
- * Modo estricto al cargar:
- * - load() SOLO lee si el CSV ya existe. NO crea el archivo.
- * - Si no existe, lanza IllegalStateException para que la app avise y termine.
- * Guardado:
- * - save() sigue creando/escribiendo el CSV (atómico + fsync) cuando hay una venta.
- */
 class ProductRepository(
     csvPath: String = defaultCsvPath(),
     private val strictLoad: Boolean = true
@@ -25,7 +18,7 @@ class ProductRepository(
 
     companion object {
         private fun defaultCsvPath(): String {
-            val root = System.getProperty("user.dir") // carpeta donde se ejecuta el jar
+            val root = System.getProperty("user.dir") 
             return "$root/data/products.csv"
         }
     }
@@ -34,7 +27,7 @@ class ProductRepository(
 
     fun load(): MutableList<Producto> {
         try {
-            // CARGA ESTRICTA: no crear nada si no existe
+        
             if (!Files.exists(path)) {
                 val msg = "Archivo CSV no encontrado en: $path"
                 Logger.error(msg)
@@ -73,13 +66,13 @@ class ProductRepository(
         }
         val bytes = sb.toString().toByteArray(StandardCharsets.UTF_8)
 
-        // Escritura atómica + fsync
+
         val tmp = File.createTempFile("products_", ".tmp", path.parent.toFile()).toPath()
         try {
             FileOutputStream(tmp.toFile()).use { fos ->
                 fos.write(bytes)
                 fos.flush()
-                fos.fd.sync() // forzar a disco
+                fos.fd.sync() 
             }
             Files.move(
                 tmp,

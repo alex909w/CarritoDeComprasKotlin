@@ -10,7 +10,7 @@ fun main() {
     Logger.info("Usando CSV en: ${repo.absolutePath()}")
 
     val productos = try {
-        repo.load() // ← NO crea archivo si no existe
+        repo.load() 
     } catch (e: Exception) {
         println("❌ No se encontró el inventario en:\n   ${repo.absolutePath()}")
         println("   Crea el archivo CSV con este encabezado y datos de ejemplo:")
