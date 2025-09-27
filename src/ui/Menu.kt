@@ -20,7 +20,7 @@ class Menu(
                 println("4) Ver carrito")
                 println("5) Finalizar compra (Factura)")
                 println("6) Salir")
-                println("7) Inventario (Agregar/Editar)") // ← NUEVO
+                println("7) Inventario (Agregar/Editar)")
 
                 when (Input.leerInt("Seleccione una opción: ", 1..7)) {
                     1 -> verProductos()
@@ -28,11 +28,11 @@ class Menu(
                     3 -> eliminarProducto()
                     4 -> verCarrito()
                     5 -> facturar()
-                    6 -> {
+                    6 -> inventarioMenu()
+                    7 -> {
                         println("👋 Gracias por usar el sistema.")
                         return
                     }
-                    7 -> inventarioMenu() // ← NUEVO
                 }
             } catch (t: Throwable) {
                 println("⚠️ Ocurrió un error. Revise el log.")
@@ -110,8 +110,6 @@ class Menu(
         }
     }
 
-    // -------------------- NUEVO: Submenú de Inventario --------------------
-
     private fun inventarioMenu() {
         while (true) {
             println("\n===== INVENTARIO =====")
@@ -153,7 +151,7 @@ class Menu(
 
         println("Actual → Nombre='${actual.nombre}', Precio=${"%.2f".format(actual.precio)}, Stock=${actual.cantidadDisponible}")
         val nuevoNombre = Input.leerString("Nuevo nombre (Enter para mantener): ", allowEmpty = true)
-            .ifBlank { null } // null = no cambiar
+            .ifBlank { null } 
         val nuevoPrecio = Input.leerDoubleOpcional("Nuevo precio (Enter para mantener): ")
         val nuevoStock  = Input.leerIntOpcional("Nuevo stock (Enter para mantener): ")
 
