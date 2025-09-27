@@ -1,44 +1,50 @@
-import events.*
+package ui
+
 import models.Carrito
-import repository.ProductRepository
 import services.TiendaService
-import ui.Menu
-import utils.Logger
+import java.util.Scanner
 
-fun main() {
-    val repo = ProductRepository("data/products.csv", strictLoad = true)
-    Logger.info("Usando CSV en: ${repo.absolutePath()}")
+class Menu(
+    private val tienda: TiendaService,
+    private val carrito: Carrito,
+    private val impuesto: Double
+) {
 
-    val productos = try {
-        repo.load() // ← NO crea archivo si no existe
-    } catch (e: Exception) {
-        println("❌ No se encontró el inventario en:\n   ${repo.absolutePath()}")
-        println("   Crea el archivo CSV con este encabezado y datos de ejemplo:")
-        println("   id,nombre,precio,cantidadDisponible")
-        println("   1,Laptop,500.00,5")
-        println("   2,Mouse,20.00,10")
-        println("   3,Teclado,35.50,8")
-        println("\nLuego vuelve a ejecutar la aplicación desde la raíz del proyecto.")
-        Logger.error("No se pudo cargar inventario", e)
-        return
+    private val scanner = Scanner(System.`in`)
+
+    fun loop() {
+        var opcion: Int
+        do {
+            mostrarMenuPrincipal()
+            opcion = scanner.nextInt()
+            when (opcion) {
+                1 -> tienda.listarProductos()
+                2 -> {
+                    print("Ingrese ID de producto: ")
+                    val id = scanner.nextInt()
+                    print("Cantidad: ")
+                    val cantidad = scanner.nextInt()
+                    tienda.agregarAlCarrito(id, cantidad)
+                }
+                3 -> {
+                    print("Ingrese ID de producto a eliminar: ")
+                    val id = scanner.nextInt()
+                    tienda.eliminarDelCarrito(id)
+                }
+                4 -> tienda.checkout(impuesto)
+                0 -> println("Saliendo...")
+                else -> println("Opción inválida.")
+            }
+        } while (opcion != 0)
     }
 
-    val carrito = Carrito()
-    val tienda = TiendaService(productos, carrito, repo)
-
-    val auditor = { ev: AppEvent ->
-        when (ev) {
-            is ProductoAgregadoEvent -> Logger.info("EV ProductoAgregado: id=${ev.productoId}, cant=${ev.cantidad}")
-            is ProductoEliminadoEvent -> Logger.info("EV ProductoEliminado: id=${ev.productoId}")
-            is CheckoutEvent -> Logger.info("EV Checkout: items=${ev.items.size}, subtotal=${ev.subtotal}, impuesto=${ev.impuesto}, total=${ev.total}")
-            is ErrorEvent -> Logger.error("EV Error: ${ev.mensaje}")
-        }
+    private fun mostrarMenuPrincipal() {
+        println("\n====== Carrito de Compras ======")
+        println("1. Ver inventario")
+        println("2. Agregar al carrito")
+        println("3. Eliminar del carrito")
+        println("4. Finalizar compra")
+        println("0. Salir")
+        print("Seleccione una opción: ")
     }
-    EventBus.subscribe(auditor)
-
-    Runtime.getRuntime().addShutdownHook(Thread {
-        try { tienda.guardarInventario() } catch (_: Throwable) {}
-    })
-
-    Menu(tienda, carrito, impuesto = 0.12).loop()
 }
