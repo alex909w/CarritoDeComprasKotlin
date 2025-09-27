@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 enum class LogLevel { INFO, WARN, ERROR }
 
 object Logger {
+    // Archivo de log
     private val archivo = File("logs/errores.log").also {
         if (!it.parentFile.exists()) it.parentFile.mkdirs()
         if (!it.exists()) it.createNewFile()
@@ -24,6 +25,7 @@ object Logger {
     fun warn(msg: String) = log(LogLevel.WARN, msg)
     fun error(msg: String, t: Throwable? = null) = log(LogLevel.ERROR, msg, t)
 
+    // Stacktrace como string
     private fun stackTrace(t: Throwable): String {
         val sw = StringWriter()
         t.printStackTrace(PrintWriter(sw))

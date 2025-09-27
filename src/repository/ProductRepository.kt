@@ -9,6 +9,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
+// Repositorio de productos CSV
 class ProductRepository(
     csvPath: String = defaultCsvPath(),
     private val strictLoad: Boolean = true
@@ -25,9 +26,9 @@ class ProductRepository(
 
     fun absolutePath(): String = path.toString()
 
+    // Carga productos desde CSV
     fun load(): MutableList<Producto> {
         try {
-        
             if (!Files.exists(path)) {
                 val msg = "Archivo CSV no encontrado en: $path"
                 Logger.error(msg)
@@ -55,8 +56,9 @@ class ProductRepository(
         }
     }
 
+    // Guarda productos en CSV
     fun save(productos: List<Producto>) {
-        ensureDirExists() // para permitir guardar tras una venta aunque no existiera antes el archivo
+        ensureDirExists()
         // Construir contenido
         val sb = StringBuilder()
         sb.append("id,nombre,precio,cantidadDisponible\n")
@@ -88,8 +90,9 @@ class ProductRepository(
         }
     }
 
-    // --- utilidades ---
+    // Utilidades internas
 
+    // Parsea línea CSV a Producto
     private fun parseLineToProducto(line: String): Producto? {
         val cells = parseCsvLine(line)
         return try {

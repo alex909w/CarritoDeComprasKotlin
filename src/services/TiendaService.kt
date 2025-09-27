@@ -8,14 +8,16 @@ import models.*
 import repository.ProductRepository
 import utils.Logger
 
+// Servicio principal de la tienda
 class TiendaService(
     private val productos: MutableList<Producto>,
     private val carrito: Carrito,
     private val repo: ProductRepository
 ) {
+    // Lista productos ordenados
     fun listarProductos(): List<Producto> = productos.sortedBy { it.id }
 
-    // NO descuenta stock aquí. Solo valida y agrega al carrito.
+    // Agrega producto al carrito
     fun agregarAlCarrito(id: Int, cantidad: Int): OpResultado {
         val p = productos.find { it.id == id } ?: return OpResultado.Error("Producto no encontrado.")
         if (cantidad <= 0) return OpResultado.Error("La cantidad debe ser > 0.")
@@ -32,7 +34,7 @@ class TiendaService(
         return res
     }
 
-    // Eliminar del carrito NO modifica el CSV ni el stock
+    // Elimina producto del carrito
     fun eliminarDelCarrito(id: Int): OpResultado {
         val item = carrito.obtenerItems().find { it.producto.id == id }
             ?: return OpResultado.Error("El producto no está en el carrito.")
@@ -44,17 +46,11 @@ class TiendaService(
         return res
     }
 
-    /**
-     * Confirmar venta:
-     * 1) Revalida stock.
-     * 2) Descuenta stock.
-     * 3) Guarda CSV.
-     * 4) Publica evento y vacía carrito.
-     */
+    // Confirma venta y descuenta stock
     fun confirmarVenta(impuesto: Double): VentaResultado {
         if (carrito.estaVacio()) return VentaResultado.Fallo("El carrito está vacío.")
 
-        val items = carrito.obtenerItems().map { it.copy() } // snapshot
+        val items = carrito.obtenerItems().map { it.copy() }
         for (it in items) {
             if (it.cantidad > it.producto.cantidadDisponible) {
                 return VentaResultado.Fallo("Stock insuficiente para '${it.producto.nombre}'. Disponible: ${it.producto.cantidadDisponible}")
@@ -82,8 +78,7 @@ class TiendaService(
 
     fun guardarInventario() = repo.save(productos)
 
-    // --------- NUEVO: Inventario (agregar/editar) ---------
-
+    // Inventario: agregar producto
     fun agregarProductoInventario(nuevo: Producto): OpResultado {
         if (productos.any { it.id == nuevo.id }) return OpResultado.Error("Ya existe un producto con el ID ${nuevo.id}.")
         if (nuevo.nombre.isBlank()) return OpResultado.Error("El nombre no puede estar vacío.")
@@ -101,6 +96,7 @@ class TiendaService(
         }
     }
 
+    // Inventario: editar producto
     fun editarProductoInventario(
         id: Int,
         nombre: String?,

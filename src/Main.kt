@@ -5,6 +5,7 @@ import services.TiendaService
 import ui.Menu
 import utils.Logger
 
+// Punto de entrada principal
 fun main() {
     val repo = ProductRepository("data/products.csv", strictLoad = true)
     Logger.info("Usando CSV en: ${repo.absolutePath()}")
@@ -26,6 +27,7 @@ fun main() {
     val carrito = Carrito()
     val tienda = TiendaService(productos, carrito, repo)
 
+    // Auditoría de eventos
     val auditor = { ev: AppEvent ->
         when (ev) {
             is ProductoAgregadoEvent -> Logger.info("EV ProductoAgregado: id=${ev.productoId}, cant=${ev.cantidad}")

@@ -2,6 +2,7 @@ package utils
 
 object Input {
 
+    // Lee un entero
     fun leerInt(mensaje: String, rango: IntRange? = null): Int {
         while (true) {
             print(mensaje)
@@ -19,6 +20,7 @@ object Input {
         }
     }
 
+    // Lee un double
     fun leerDouble(mensaje: String, minimo: Double? = null): Double {
         while (true) {
             print(mensaje)
@@ -36,6 +38,7 @@ object Input {
         }
     }
 
+    // Lee un string
     fun leerString(mensaje: String, allowEmpty: Boolean = false): String {
         while (true) {
             print(mensaje)
@@ -48,7 +51,7 @@ object Input {
         }
     }
 
-    // Para edición: si el usuario presiona Enter, retorna null (no cambiar)
+    // Lee un entero opcional
     fun leerIntOpcional(mensaje: String): Int? {
         print(mensaje)
         val txt = readlnOrNull()?.trim().orEmpty()

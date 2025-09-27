@@ -5,11 +5,13 @@ import services.TiendaService
 import utils.Input
 import utils.Logger
 
+// Menú principal de la aplicación
 class Menu(
     private val tienda: TiendaService,
     private val carrito: Carrito,
     private val impuesto: Double = 0.12
 ) {
+    // Bucle principal
     fun loop() {
         while (true) {
             try {
@@ -41,6 +43,7 @@ class Menu(
         }
     }
 
+    // Muestra productos
     private fun verProductos() {
         println("\n📦 Productos disponibles:")
         tienda.listarProductos().forEach {
@@ -48,6 +51,7 @@ class Menu(
         }
     }
 
+    // Agrega producto al carrito
     private fun agregarProducto() {
         val id = Input.leerInt("ID del producto: ")
         val cantidad = Input.leerInt("Cantidad: ", 1..100000)
@@ -57,6 +61,7 @@ class Menu(
         }
     }
 
+    // Elimina producto del carrito
     private fun eliminarProducto() {
         val id = Input.leerInt("ID del producto a eliminar del carrito: ")
         when (val res = tienda.eliminarDelCarrito(id)) {
@@ -65,6 +70,7 @@ class Menu(
         }
     }
 
+    // Muestra el carrito
     private fun verCarrito() {
         if (carrito.estaVacio()) {
             println("🛒 El carrito está vacío.")
@@ -77,6 +83,7 @@ class Menu(
         println("TOTAL: ${"%.2f".format(carrito.total())}")
     }
 
+    // Factura la compra
     private fun facturar() {
         if (carrito.estaVacio()) {
             println("🛒 No hay productos en el carrito.")
@@ -110,8 +117,7 @@ class Menu(
         }
     }
 
-    // -------------------- NUEVO: Submenú de Inventario --------------------
-
+    // Submenú de inventario
     private fun inventarioMenu() {
         while (true) {
             println("\n===== INVENTARIO =====")
@@ -129,6 +135,7 @@ class Menu(
         }
     }
 
+    // Agrega producto al inventario
     private fun inventarioAgregar() {
         println("\n➕ Agregar nuevo producto")
         val id = Input.leerInt("ID (entero positivo): ", 1..1_000_000)
@@ -142,6 +149,7 @@ class Menu(
         }
     }
 
+    // Edita producto del inventario
     private fun inventarioEditar() {
         println("\n✏️ Editar producto")
         val id = Input.leerInt("ID del producto a editar: ")

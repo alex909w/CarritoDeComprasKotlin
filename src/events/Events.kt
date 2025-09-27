@@ -2,6 +2,7 @@ package events
 
 import models.CarritoItem
 
+// Eventos de la aplicación
 sealed interface AppEvent
 
 data class ProductoAgregadoEvent(val productoId: Int, val cantidad: Int) : AppEvent
