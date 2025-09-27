@@ -28,11 +28,11 @@ class Menu(
                     3 -> eliminarProducto()
                     4 -> verCarrito()
                     5 -> facturar()
-                    6 -> inventarioMenu()
-                    7 -> {
+                    6 -> {
                         println("👋 Gracias por usar el sistema.")
                         return
                     }
+                    7 -> inventarioMenu() 
                 }
             } catch (t: Throwable) {
                 println("⚠️ Ocurrió un error. Revise el log.")
@@ -109,6 +109,8 @@ class Menu(
             }
         }
     }
+
+    // -------------------- NUEVO: Submenú de Inventario --------------------
 
     private fun inventarioMenu() {
         while (true) {
